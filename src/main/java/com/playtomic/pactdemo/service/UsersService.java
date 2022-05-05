@@ -20,7 +20,7 @@ public class UsersService {
 
     @PostConstruct
     void setup() {
-        users.add(new User("1", "tom", true, null));
+        users.add(new User("1", "tom", null));
     }
 
 
@@ -31,14 +31,14 @@ public class UsersService {
 
         if (withCars) {
             var carsByUser = carsServiceClient.getCarsByUser(id);
-            user = new User(user.id(), user.name(), user.condition(), carsByUser);
+            user = new User(user.id(), user.name(), carsByUser);
         }
 
         return user;
     }
 
     public User saveUser(UserRequestBody body) {
-        var user = new User(String.valueOf(users.size() + 1), body.name(), body.condition(), null);
+        var user = new User(String.valueOf(users.size() + 1), body.name(), null);
         users.add(user);
         return user;
     }
