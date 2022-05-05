@@ -1,0 +1,119 @@
+{
+    "provider": {
+        "name": "test_provider"
+    },
+    "consumer": {
+        "name": "test_consumer"
+    },
+    "interactions": [
+        {
+            "description": "GET REQUEST",
+            "request": {
+                "method": "GET",
+                "path": "/v1/users/1"
+            },
+            "response": {
+                "status": 200,
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "body": {
+                    "id": "1",
+                    "condition": true,
+                    "name": "tom"
+                }
+            },
+            "providerStates": [
+                {
+                    "name": "test GET"
+                }
+            ]
+        },
+        {
+            "description": "POST REQUEST",
+            "request": {
+                "method": "POST",
+                "path": "/v1/users",
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "body": {
+                    "condition": true,
+                    "name": "michael"
+                }
+            },
+            "response": {
+                "status": 200,
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "body": {
+                    "id": "2",
+                    "condition": true,
+                    "name": "michael"
+                }
+            },
+            "providerStates": [
+                {
+                    "name": "test POST"
+                }
+            ]
+        },
+        {
+            "description": "GET ONE USER",
+            "request": {
+                "method": "GET",
+                "path": "/v1/users/2"
+            },
+            "response": {
+                "status": 200,
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "body": {
+                    "id": "2",
+                    "condition": true,
+                    "name": "michael"
+                }
+            },
+            "providerStates": [
+                {
+                    "name": "test GET one user by id"
+                }
+            ]
+        },
+        {
+            "description": "GET ONE USER WITH CARS",
+            "request": {
+                "method": "GET",
+                "path": "/v1/users/1",
+                "query": "with_cars=true"
+            },
+            "response": {
+                "status": 200,
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "body": {
+                    "id": "1",
+                    "condition": true,
+                    "name": "tom",
+                    "cars": [{"maker":  "Seat", "model":  "Panda"}]
+                }
+            },
+            "providerStates": [
+                {
+                    "name": "test GET one user by id with cars"
+                }
+            ]
+        }
+    ],
+    "metadata": {
+        "pact-specification": {
+            "version": "3.0.0"
+        },
+        "pact-jvm": {
+            "version": "3.5.0"
+        }
+    }
+}
