@@ -16,9 +16,7 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      version:
-        description: The version of the service
-        value: ${{ steps.version.outputs.replaced }}
+      version: ${{ steps.version.outputs.replaced }}
 
     steps:
       - uses: actions/checkout@v2
