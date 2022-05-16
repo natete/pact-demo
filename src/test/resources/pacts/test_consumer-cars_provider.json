@@ -1,9 +1,9 @@
 {
     "provider": {
-        "name": "test_provider"
+        "name": "UsersService"
     },
     "consumer": {
-        "name": "test_consumer"
+        "name": "UsersClient"
     },
     "interactions": [
         {

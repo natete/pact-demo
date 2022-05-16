@@ -1,8 +1,8 @@
-package com.playtomic.pactdemo.api;
+package com.playtomic.pactdemo.users.api;
 
-import com.playtomic.pactdemo.api.requests.UserRequestBody;
-import com.playtomic.pactdemo.domain.User;
-import com.playtomic.pactdemo.service.UsersService;
+import com.playtomic.pactdemo.users.api.requests.UserRequestBody;
+import com.playtomic.pactdemo.users.domain.User;
+import com.playtomic.pactdemo.users.service.UsersService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;

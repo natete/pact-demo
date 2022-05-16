@@ -1,6 +1,6 @@
-package com.playtomic.pactdemo.service;
+package com.playtomic.pactdemo.users.service;
 
-import com.playtomic.pactdemo.domain.Car;
+import com.playtomic.pactdemo.users.domain.Car;
 import java.util.List;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;

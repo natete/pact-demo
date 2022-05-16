@@ -1,10 +1,10 @@
-package com.playtomic.pactdemo;
+package com.playtomic.pactdemo.users;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class PactDemoApplicationTests {
+class UserApplicationTests {
 
 	@Test
 	void contextLoads() {

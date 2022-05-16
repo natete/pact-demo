@@ -1,1 +1,21 @@
+server:
+  port: 10200
+
 cars-service.url: localhost:10100
+
+
+---
+spring.config.activate.on-profile: test
+
+pactbroker:
+  host: playtomic-nacho.pactflow.io
+  port: 443
+  scheme: https
+  auth:
+    token: jNlqXFqiA6__lb8oFfomFA
+
+pact:
+  provider:
+    version: 1
+  verifier:
+    publishResults: true

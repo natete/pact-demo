@@ -1,4 +1,4 @@
-package com.playtomic.pactdemo.domain;
+package com.playtomic.pactdemo.users.domain;
 
 import java.util.List;
 
