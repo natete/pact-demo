@@ -30,7 +30,7 @@ jobs:
         id: version
         with:
           pattern: '/'
-          string: "${{inputs.branch_name}}-${{steps.date.outputs.date}}-${{github.run_number}}-${{github.sha}}"
+          string: "${{github.ref_name}}-${{steps.date.outputs.date}}-${{github.run_number}}-${{github.sha}}"
           flags: 'g'
           replace-with: '-'
 
