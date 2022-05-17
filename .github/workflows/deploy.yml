@@ -1,0 +1,67 @@
+name: 'Commit'
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+      - master
+
+env:
+  PACT_BROKER_BASE_URL: https://playtomic-nacho.pactflow.io
+  PACT_BROKER_TOKEN: ${{ secrets.PACTFLOW_TOKEN }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    outputs:
+      version: ${{ steps.version.outputs.replaced }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Get date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y%m%d%H%M%S')"
+        shell: bash
+
+      - name: Version
+        uses: frabert/replace-string-action@v2.0
+        id: version
+        with:
+          pattern: '/'
+          string: "${{github.ref_name}}-${{steps.date.outputs.date}}-${{github.run_number}}-${{github.sha}}"
+          flags: 'g'
+          replace-with: '-'
+
+      - uses: actions/setup-java@v2
+        with:
+          java-version: 17
+          distribution: 'temurin'
+          cache: maven
+      - name: Build
+        run: mvn -B clean compile -U --file pom.xml
+
+      - name: Verify
+        run: mvn -B verify -Dpact.provider.version=${{ steps.version.outputs.replaced }} -Dpact.verifier.publishResults=true --file pom.xml
+
+      - run: docker pull pactfoundation/pact-cli:latest
+
+      - name: Publish pacts
+        run: docker run --rm -v ${PWD}:${PWD} -e PACT_BROKER_BASE_URL -e PACT_BROKER_TOKEN pactfoundation/pact-cli publish ${PWD}/target/pacts --consumer-app-version ${{ steps.version.outputs.replaced }}
+
+  can-i-deploy:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v2
+      - run: docker pull pactfoundation/pact-cli:latest
+      - name: Can I deploy?
+        run: |
+          docker run --rm -v ${PWD}:${PWD} -e PACT_BROKER_BASE_URL -e PACT_BROKER_TOKEN pactfoundation/pact-cli broker can-i-deploy \
+          --pacticipant UsersService \
+          --version ${{ needs.test.outputs.version }} \
+          --to-environment dev \
+          --retry-while-unknown 0 \
+          --retry-interval 10
+          
