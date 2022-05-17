@@ -95,5 +95,4 @@ public class PactProviderTest {
     @State("user with id 666 does not exist")
     public void getUserById_404() {
     }
-
 }
