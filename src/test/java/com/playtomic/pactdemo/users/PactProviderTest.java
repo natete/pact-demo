@@ -53,12 +53,12 @@ public class PactProviderTest {
         wireMockServer = new WireMockServer(10100);
         wireMockServer.addMockServiceRequestListener(
             WireMockPactGenerator
-                .builder("UsersService", "CarsProvider")
+                .builder("UsersService", "CarsService")
                 .build()
         );
 
         wireMockServer.addStubMapping(
-            get(urlEqualTo("/cars/1"))
+            get(urlEqualTo("/v1/cars/1"))
                 .willReturn(aResponse()
                                 .withBody("""
                                                 [
