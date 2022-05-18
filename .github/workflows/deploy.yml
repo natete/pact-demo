@@ -43,12 +43,16 @@ jobs:
         run: mvn -B clean compile -U --file pom.xml
 
       - name: Verify
-        run: mvn -B verify -Dpact.provider.version=${{ steps.version.outputs.replaced }} -Dpact.verifier.publishResults=true --file pom.xml
+        run: mvn -B verify -Dpact.provider.version=${{ steps.version.outputs.replaced }} -Dpact.verifier.publishResults=true -Dpact.provider.tag=develop -Dpact.provider.branch=develop --file pom.xml
 
       - run: docker pull pactfoundation/pact-cli:latest
 
       - name: Publish pacts
-        run: docker run --rm -v ${PWD}:${PWD} -e PACT_BROKER_BASE_URL -e PACT_BROKER_TOKEN pactfoundation/pact-cli publish ${PWD}/target/pacts --consumer-app-version ${{ steps.version.outputs.replaced }}
+        run: |
+          docker run --rm -v ${PWD}:${PWD} -e PACT_BROKER_BASE_URL -e PACT_BROKER_TOKEN pactfoundation/pact-cli publish \
+          ${PWD}/target/pacts \
+          --consumer-app-version ${{ steps.version.outputs.replaced }}
+          --tag develop
 
   can-i-deploy:
     runs-on: ubuntu-latest
