@@ -43,7 +43,7 @@ jobs:
         run: mvn -B clean compile -U --file pom.xml
 
       - name: Verify
-        run: mvn -B verify -Dpact.provider.version=${{github.run_number}} -Dpact.verifier.publishResults=true --file pom.xml
+        run: mvn -B verify -Dpact.provider.version=${{github.run_number}} -Dpact.verifier.publishResults=true -Dpact.provider.tag=develop -Dpact.provider.branch=develop --file pom.xml
 
       - run: docker pull pactfoundation/pact-cli:latest
 
@@ -61,7 +61,7 @@ jobs:
           docker run --rm -v ${PWD}:${PWD} -e PACT_BROKER_BASE_URL -e PACT_BROKER_TOKEN pactfoundation/pact-cli broker can-i-deploy \
           --pacticipant UsersService \
           --version ${{ needs.test.outputs.version }} \
-          --to-environment dev \
+          --to-environment develop \
           --retry-while-unknown 0 \
           --retry-interval 10
           
