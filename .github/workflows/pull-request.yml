@@ -48,7 +48,7 @@ jobs:
       - run: docker pull pactfoundation/pact-cli:latest
 
       - name: Publish pacts
-        run: docker run --rm -v ${PWD}:${PWD} -e PACT_BROKER_BASE_URL -e PACT_BROKER_TOKEN pactfoundation/pact-cli publish ${PWD}/target/pacts --consumer-app-version ${{github.run_number}}
+        run: docker run --rm -v ${PWD}:${PWD} -e PACT_BROKER_BASE_URL -e PACT_BROKER_TOKEN pactfoundation/pact-cli publish ${PWD}/target/pacts --consumer-app-version ${{github.run_number}} --tag develop
 
   can-i-deploy:
     runs-on: ubuntu-latest

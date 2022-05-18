@@ -68,7 +68,7 @@ jobs:
           --to-environment dev \
           --retry-while-unknown 0 \
           --retry-interval 10
-      - name: Tag version
+      - name: Record deployment
         run: |
           docker run --rm -v ${PWD}:${PWD} -e PACT_BROKER_BASE_URL -e PACT_BROKER_TOKEN pactfoundation/pact-cli broker record_deployment \
           --pacticipant UsersService
