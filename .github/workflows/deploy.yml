@@ -1,0 +1,63 @@
+name: 'Commit'
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+      - master
+
+env:
+  PACT_BROKER_BASE_URL: https://playtomic-nacho.pactflow.io
+  PACT_BROKER_TOKEN: ${{ secrets.PACTFLOW_TOKEN }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    outputs:
+      version: ${{ steps.version.outputs.replaced }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Get date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y%m%d%H%M%S')"
+        shell: bash
+
+      - name: Version
+        uses: frabert/replace-string-action@v2.0
+        id: version
+        with:
+          pattern: '/'
+          string: "${{github.ref_name}}-${{steps.date.outputs.date}}-${{github.run_number}}-${{github.sha}}"
+          flags: 'g'
+          replace-with: '-'
+
+      - uses: actions/setup-java@v2
+        with:
+          java-version: 17
+          distribution: 'temurin'
+          cache: maven
+      - name: Build
+        run: mvn -B clean compile -U --file pom.xml
+
+      - name: Verify
+        run: mvn -B verify -Dpact.provider.version=${{ steps.version.outputs.replaced }} -Dpact.verifier.publishResults=true -Dpact.provider.branch=${{ github.ref_name }} --file pom.xml
+
+      - name: Can I deploy?
+        run: |
+          docker run --rm -v ${PWD}:${PWD} -e PACT_BROKER_BASE_URL -e PACT_BROKER_TOKEN pactfoundation/pact-cli broker can-i-deploy \
+          --pacticipant UsersService \
+          --version ${{steps.version.outputs.replaced}} \
+          --to-environment ${{github.ref_name}} \
+          --retry-while-unknown 0 \
+          --retry-interval 10
+
+      - name: Record deployment
+        run: |
+          docker run --rm -v ${PWD}:${PWD} -e PACT_BROKER_BASE_URL -e PACT_BROKER_TOKEN pactfoundation/pact-cli broker record_deployment \
+          --pacticipant UsersService
+          --version ${{steps.version.outputs.replaced}}
+          --environment ${{github.ref_name}}
+
