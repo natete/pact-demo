@@ -43,7 +43,7 @@ jobs:
         run: mvn -B clean compile -U --file pom.xml
 
       - name: Verify
-        run: mvn -B verify -Dpact.provider.version=${{steps.version.outputs.replaced}} -Dpact.verifier.publishResults=true -Dpact.provider.branch=${{ github.base_ref }} --file pom.xml
+        run: mvn -B verify --file pom.xml
 
       - run: docker pull pactfoundation/pact-cli:latest
         if: hashFiles('target/pacts') != ''
