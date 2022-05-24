@@ -64,7 +64,8 @@ jobs:
       - name: Verify
         run: mvn -B verify -Dpact.provider.version=${{steps.version.outputs.replaced}} -Dpact.verifier.publishResults=true -Dpact.provider.branch=${{ steps.source-branch.outputs.source_branch }} --file pom.xml
 
-      - run: docker pull pactfoundation/pact-cli:latest
+      - name: Set up pact-cli
+        run: docker pull pactfoundation/pact-cli:latest
         if: hashFiles('target/pacts') != ''
 
       - name: Publish pacts
