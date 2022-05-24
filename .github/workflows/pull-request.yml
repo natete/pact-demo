@@ -7,10 +7,10 @@ on:
       - main
       - master
 
-repository_dispatch:
-  types:
-    - contract-published
-    - verification-results-published
+  repository_dispatch:
+    types:
+      - contract-published
+      - verification-results-published
 
 env:
   PACT_BROKER_BASE_URL: https://playtomic-nacho.pactflow.io
