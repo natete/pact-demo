@@ -48,6 +48,9 @@ jobs:
       - name: Build
         run: mvn -B clean compile -U --file pom.xml
 
+      - name: log
+        run: echo ${{github.event.client_payload.branch}}
+
       - name: Get environment
         id: pact-environment
         run: |
