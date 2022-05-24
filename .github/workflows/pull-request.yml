@@ -7,6 +7,11 @@ on:
       - main
       - master
 
+  repository_dispatch:
+    types:
+      - contract-published
+      - verification-results-published
+
 env:
   PACT_BROKER_BASE_URL: https://playtomic-nacho.pactflow.io
   PACT_BROKER_TOKEN: ${{ secrets.PACTFLOW_TOKEN }}
@@ -43,14 +48,14 @@ jobs:
         run: mvn -B clean compile -U --file pom.xml
 
       - name: Verify
-        run: mvn -B verify -Dpact.provider.version=${{github.head_ref}} -Dpact.verifier.publishResults=true -Dpact.provider.branch=${{ github.base_ref }} --file pom.xml
+        run: mvn -B verify -Dpact.provider.version=${{steps.version.outputs.replaced}} -Dpact.verifier.publishResults=true -Dpact.provider.branch=${{ github.head_ref }} --file pom.xml
 
       - run: docker pull pactfoundation/pact-cli:latest
         if: hashFiles('target/pacts') != ''
 
       - name: Publish pacts
         if: hashFiles('target/pacts') != ''
-        run: docker run --rm -v ${PWD}:${PWD} -e PACT_BROKER_BASE_URL -e PACT_BROKER_TOKEN pactfoundation/pact-cli publish ${PWD}/target/pacts --consumer-app-version ${{steps.version.outputs.replaced}} --branch ${{ github.base_ref }}
+        run: docker run --rm -v ${PWD}:${PWD} -e PACT_BROKER_BASE_URL -e PACT_BROKER_TOKEN pactfoundation/pact-cli publish ${PWD}/target/pacts --consumer-app-version ${{steps.version.outputs.replaced}} --branch ${{ github.head_ref }}
 
       - name: Can I deploy?
         run: |
@@ -61,4 +66,3 @@ jobs:
           --retry-while-unknown 0 \
           --retry-interval 10
 
-      
