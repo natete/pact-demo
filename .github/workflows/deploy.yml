@@ -45,6 +45,11 @@ jobs:
       - name: Verify
         run: mvn -B verify -Dpact.provider.version=${{ steps.version.outputs.replaced }} -Dpact.verifier.publishResults=true -Dpact.provider.branch=${{ github.ref_name }} --file pom.xml
 
+      - name: Publish pacts
+        if: hashFiles('target/pacts') != ''
+        run: docker run --rm -v ${PWD}:${PWD} -e PACT_BROKER_BASE_URL -e PACT_BROKER_TOKEN pactfoundation/pact-cli publish ${PWD}/target/pacts --consumer-app-version ${{steps.version.outputs.replaced}} --branch ${{ github.ref_name }}
+
+
       - name: Can I deploy?
         run: |
           docker run --rm -v ${PWD}:${PWD} -e PACT_BROKER_BASE_URL -e PACT_BROKER_TOKEN pactfoundation/pact-cli broker can-i-deploy \
@@ -57,7 +62,7 @@ jobs:
       - name: Record deployment
         run: |
           docker run --rm -v ${PWD}:${PWD} -e PACT_BROKER_BASE_URL -e PACT_BROKER_TOKEN pactfoundation/pact-cli broker record_deployment \
-          --pacticipant UsersService
-          --version ${{steps.version.outputs.replaced}}
+          --pacticipant UsersService \
+          --version ${{steps.version.outputs.replaced}} \
           --environment ${{github.ref_name}}
 

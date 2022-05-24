@@ -6,6 +6,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 
 import au.com.dius.pact.provider.junit5.HttpTestTarget;
 import au.com.dius.pact.provider.junit5.PactVerificationContext;
+import au.com.dius.pact.provider.junitsupport.IgnoreNoPactsToVerify;
 import au.com.dius.pact.provider.junitsupport.Provider;
 import au.com.dius.pact.provider.junitsupport.State;
 import au.com.dius.pact.provider.junitsupport.loader.PactBroker;
@@ -30,6 +31,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 //@PactFolder("pacts")
 @PactBroker
 @ActiveProfiles("test")
+@IgnoreNoPactsToVerify
 public class PactProviderTest {
 
     @LocalServerPort
