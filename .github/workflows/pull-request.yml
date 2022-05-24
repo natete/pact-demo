@@ -52,6 +52,15 @@ jobs:
         id: source-branch
         run: echo "::set-output name=source_branch::$(git rev-parse --abbrev-ref HEAD)"
 
+      - name: Get environment
+        id: pact-environment
+        run: |
+          if [ ${{github.event_name}} == "pull_request" ]; then
+            echo "::set-output name=pact_environment::${{ github.base_ref }}"
+          elif [ ${{github.event_name}} == "repository_dispatch" ]; then
+            echo "::set-output name=pact_environment::${{ github.event.client_payload.environment }}"
+          fi
+
       - name: Verify
         run: mvn -B verify -Dpact.provider.version=${{steps.version.outputs.replaced}} -Dpact.verifier.publishResults=true -Dpact.provider.branch=${{ steps.source-branch.outputs.source_branch }} --file pom.xml
 
@@ -67,6 +76,6 @@ jobs:
           docker run --rm -v ${PWD}:${PWD} -e PACT_BROKER_BASE_URL -e PACT_BROKER_TOKEN pactfoundation/pact-cli broker can-i-deploy \
           --pacticipant UsersService \
           --version ${{steps.version.outputs.replaced}} \
-          --to-environment ${{ github.ref_name }} \
+          --to-environment ${{ steps.pact-environment.outputs.pact_environment }} \
           --retry-while-unknown 0 \
           --retry-interval 10
