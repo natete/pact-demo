@@ -48,9 +48,8 @@ jobs:
       - name: Build
         run: mvn -B clean compile -U --file pom.xml
 
-      - name: Get PR source branch
-        id: source-branch
-        run: echo "::set-output name=source_branch::$(git rev-parse --abbrev-ref HEAD)"
+      - name: log
+        run: echo ${{github.event.client_payload.branch}}
 
       - name: Get environment
         id: pact-environment
@@ -62,14 +61,15 @@ jobs:
           fi
 
       - name: Verify
-        run: mvn -B verify -Dpact.provider.version=${{steps.version.outputs.replaced}} -Dpact.verifier.publishResults=true -Dpact.provider.branch=${{ steps.source-branch.outputs.source_branch }} --file pom.xml
+        run: mvn -B verify -Dpact.provider.version=${{steps.version.outputs.replaced}} -Dpact.verifier.publishResults=true -Dpact.provider.branch=${{ github.ref_name }} --file pom.xml
 
-      - run: docker pull pactfoundation/pact-cli:latest
+      - name: Set up pact-cli
+        run: docker pull pactfoundation/pact-cli:latest
         if: hashFiles('target/pacts') != ''
 
       - name: Publish pacts
         if: hashFiles('target/pacts') != ''
-        run: docker run --rm -v ${PWD}:${PWD} -e PACT_BROKER_BASE_URL -e PACT_BROKER_TOKEN pactfoundation/pact-cli publish ${PWD}/target/pacts --consumer-app-version ${{steps.version.outputs.replaced}} --branch ${{ steps.source-branch.outputs.source_branch }}
+        run: docker run --rm -v ${PWD}:${PWD} -e PACT_BROKER_BASE_URL -e PACT_BROKER_TOKEN pactfoundation/pact-cli publish ${PWD}/target/pacts --consumer-app-version ${{steps.version.outputs.replaced}} --branch ${{ github.ref_name }}
 
       - name: Can I deploy?
         run: |
