@@ -61,7 +61,7 @@ jobs:
         run: |
           docker run --rm -v ${PWD}:${PWD} -e PACT_BROKER_BASE_URL -e PACT_BROKER_TOKEN pactfoundation/pact-cli broker can-i-deploy \
           --pacticipant UsersService \
-          --version ${{steps.version.outputs.replaced}} \
+          --version ${{github.head_ref}} \
           --to-environment ${{ github.base_ref }} \
           --retry-while-unknown 0 \
           --retry-interval 10
