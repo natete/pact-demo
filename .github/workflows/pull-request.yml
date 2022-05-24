@@ -32,7 +32,7 @@ jobs:
 
       - name: Version
         uses: frabert/replace-string-action@v2.0
-        id: versiongit rev-parse --abbrev-ref HEAD
+        id: version
         with:
           pattern: '/'
           string: "${{github.ref_name}}-${{steps.date.outputs.date}}-${{github.run_number}}-${{github.sha}}"
